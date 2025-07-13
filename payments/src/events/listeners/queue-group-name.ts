@@ -1,0 +1,1 @@
+export const queueGroupName = 'payments-service'; // This is used to identify the service in the NATS streaming server, it is used in the event listeners to group them together

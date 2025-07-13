@@ -1,0 +1,1 @@
+export const queueGroupName = "tickets-service"; // This is the queue group name for the tickets service
