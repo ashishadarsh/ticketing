@@ -4,10 +4,10 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import axios from "axios";
 import Router from "next/router";
 
-// Load your Stripe publishable key
+// Load Stripe key
 const stripePromise = loadStripe("pk_test_51RjdOAR8IQhpv1s7zQXqtCsrov6HX9LDhhFxl8eImrS0K9Dy8PTP9pzuMGM1gRbuk2NsdBPw1xz0angK13WOtdW900uw17f0Ks");
 
-// Payment form inside modal
+// ✅ Payment form inside modal
 const PaymentForm = ({ order, close }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -32,33 +32,40 @@ const PaymentForm = ({ order, close }) => {
     try {
       await axios.post("/api/payments", {
         orderId: order.id,
-        token: token.id, // ✅ Send token to backend
+        token: token.id,
       });
 
       setSuccess(true);
-      setTimeout(close, 1500); // Close modal after success
-      Router.push("/orders"); // Redirect to orders page
+      setTimeout(() => {
+        close();
+        Router.push("/orders");
+      }, 1500);
     } catch (err) {
-      setError("Payment failed.");
+      setError("Payment failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: '1rem' }}>
-      <CardElement options={{ hidePostalCode: true }} />
-      <button type="submit" disabled={!stripe || loading} style={{ marginTop: '1rem' }}>
-        {loading ? "Processing..." : "Pay"}
+    <form onSubmit={handleSubmit}>
+      <h5 className="mb-3">Enter Payment Details</h5>
+      <div className="mb-3 p-2 border rounded">
+        <CardElement options={{ hidePostalCode: true }} />
+      </div>
+
+      {error && <div className="alert alert-danger py-1">{error}</div>}
+      {success && <div className="alert alert-success py-1">Payment successful!</div>}
+
+      <button type="submit" className="btn btn-success w-100 mt-3" disabled={!stripe || loading}>
+        {loading ? "Processing..." : "Pay Now"}
       </button>
-      {error && <div style={{ color: "red", marginTop: '0.5rem' }}>{error}</div>}
-      {success && <div style={{ color: "green", marginTop: '0.5rem' }}>Payment successful!</div>}
     </form>
   );
 };
 
-// Main component
-const orderShow = ({ order, currentUser }) => {
+// ✅ Main page component
+const orderShow = ({ order }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -72,23 +79,37 @@ const orderShow = ({ order, currentUser }) => {
     return () => clearInterval(timerId);
   }, []);
 
-  if (timeLeft < 0) {
-    return <div>Order has expired.</div>;
-  }
+  if (timeLeft < 0) return <div className="container py-5 text-center text-danger fs-4">Order has expired.</div>;
 
   return (
-    <div>
-      <h2>Time left to pay: {timeLeft} seconds</h2>
-      <p>Price: ${order.ticket.price}</p>
-      <button onClick={() => setOpenDialog(true)}>Pay Now</button>
+    <div className="container py-5">
+      <div className="card shadow p-4 mx-auto" style={{ maxWidth: "500px" }}>
+        <h2 className="mb-3 text-center">{order.ticket.title}</h2>
+        <p className="fs-5">Price: <strong>${order.ticket.price}</strong></p>
+        <p className="text-muted">Time left to pay: <strong>{timeLeft}</strong> seconds</p>
 
+        <div className="d-grid">
+          <button className="btn btn-primary" onClick={() => setOpenDialog(true)}>
+            Pay with Card
+          </button>
+        </div>
+      </div>
+
+      {/* Modal */}
       {openDialog && (
-        <div style={modalStyle}>
-          <div style={modalContentStyle}>
-            <button onClick={() => setOpenDialog(false)} style={closeBtnStyle}>×</button>
-            <Elements stripe={stripePromise}>
-              <PaymentForm order={order} close={() => setOpenDialog(false)} />
-            </Elements>
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content p-3">
+              <div className="modal-header border-0">
+                <h5 className="modal-title">Secure Payment</h5>
+                <button type="button" className="btn-close" onClick={() => setOpenDialog(false)}></button>
+              </div>
+              <div className="modal-body">
+                <Elements stripe={stripePromise}>
+                  <PaymentForm order={order} close={() => setOpenDialog(false)} />
+                </Elements>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -103,36 +124,3 @@ orderShow.getInitialProps = async (context, client) => {
 };
 
 export default orderShow;
-
-// Minimal modal styles
-const modalStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.5)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 1000,
-};
-
-const modalContentStyle = {
-  backgroundColor: "#fff",
-  padding: "2rem",
-  borderRadius: "8px",
-  width: "400px",
-  maxWidth: "90%",
-  position: "relative",
-};
-
-const closeBtnStyle = {
-  position: "absolute",
-  top: "10px",
-  right: "15px",
-  fontSize: "1.5rem",
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-};
