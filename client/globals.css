@@ -8,6 +8,43 @@ body {
     animation: gradientBG 15s ease infinite;
     font-family: 'Segoe UI', sans-serif;
   }
+
+  .nav-link:hover {
+    color: #0d6efd !important;
+    transform: translateY(-1px);
+  }
+
+  /* Light theme (default) */
+body {
+  background-color: #f9fafb;
+  color: #212529;
+}
+
+/* Dark theme */
+body.dark {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+body.dark .navbar {
+  background-color: #1e1e1e !important;
+}
+
+body.dark .nav-link {
+  color: #ccc !important;
+}
+
+body.dark .nav-link.border-bottom {
+  border-color: #0d6efd !important;
+  color: #0d6efd !important;
+}
+
+body.dark .btn-outline-secondary {
+  color: #ccc;
+  border-color: #444;
+}
+
+  
   
   @keyframes gradientBG {
     0% {

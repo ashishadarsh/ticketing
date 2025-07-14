@@ -13,23 +13,24 @@ router.post('/api/tickets', requireAuth, [
     body('price').isFloat({ gt: 0 }).withMessage('Price must be greater than 0'),
 
 ], validateRequest, async (req: Request, res: Response) => {
-    const { title, price } = req.body;
+    const { title, price, description } = req.body;
 
     const ticket = Ticket.build({
         title,
         price,
-        userId: req.currentUser!.id
+        userId: req.currentUser!.id,
+        description, // description is optional, so it can be included or omitted
     })
 
     await ticket.save();
-
+    
     //Publish this event
     await new TicketCreatedPublisher(natsWrapper.client).publish({
         id: ticket.id,
         title: ticket.title,
         price: ticket.price,
         userId: ticket.userId,
-        version: ticket.version,
+        version: ticket.version
     });
 
     res.status(201).send(ticket);

@@ -11,18 +11,31 @@ const TicketShow = ({ ticket }) => {
   });
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
-      <div className="card shadow p-4" style={{ maxWidth: "500px", width: "100%" }}>
-        <h2 className="text-center mb-3">{ticket.title}</h2>
-        <hr />
-        <div className="mb-4">
-          <h5 className="text-muted">Price:</h5>
-          <p className="fs-4 fw-semibold">${ticket.price}</p>
-        </div>
+    <div className="container py-5" style={{ maxWidth: '800px' }}>
+      <div className="mb-5">
+        <h1 className="display-5 fw-bold text-dark mb-3">{ticket.title}</h1>
+        <p className="text-muted">Buy your ticket securely</p>
+      </div>
 
-        {errors && <div className="alert alert-danger">{errors}</div>}
+      <div className="mb-4">
+        <h6 className="text-uppercase text-secondary fw-semibold mb-1">Price</h6>
+        <p className="fs-4 fw-semibold text-dark">${ticket.price}</p>
+      </div>
 
-        <button onClick={() => doRequest()} className="btn btn-success w-100">
+      <div className="mb-5">
+        <h6 className="text-uppercase text-secondary fw-semibold mb-1">Description</h6>
+        <p className="fs-5 text-dark lh-lg" style={{ whiteSpace: 'pre-wrap' }}>
+          {ticket.description}
+        </p>
+      </div>
+
+      {errors && <div className="alert alert-danger">{errors}</div>}
+
+      <div className="d-flex justify-content-start">
+        <button
+          onClick={() => doRequest()}
+          className="btn btn-primary btn-lg px-4 shadow-sm"
+        >
           Purchase Ticket
         </button>
       </div>
