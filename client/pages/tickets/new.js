@@ -5,17 +5,20 @@ import Router from "next/router";
 const NewTicket = () => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
 
   const { doRequest, errors } = useRequest({
     url: "/api/tickets",
     method: "post",
     body: {
       title,
-      price
+      price,
+      description
     },
     onSuccess: () => {
       setTitle("");
       setPrice("");
+      setDescription("");
       Router.push("/");
     }
   });
@@ -62,6 +65,17 @@ const NewTicket = () => {
               required
             />
           </div>
+
+            <div className="mb-3">
+            <label className="form-label">Description</label>
+            <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="form-control"
+                placeholder="Enter ticket description"
+                rows="3">
+            </textarea>
+            </div>
 
           {errors && <div className="alert alert-danger">{errors}</div>}
 
