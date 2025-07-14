@@ -1,0 +1,23 @@
+/* styles/globals.css */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #fbc2eb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  @keyframes gradientBG {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
