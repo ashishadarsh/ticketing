@@ -15,6 +15,13 @@ spec:
       containers:
         - name: auth
           image: ashishadarsh/auth
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
           env:
             - name: MONGO_URI
               value: 'mongodb://auth-mongo-srv:27017/auth'
